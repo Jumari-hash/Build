@@ -2,9 +2,10 @@ name: Android CI Build
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main", "master" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main", "master" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -12,22 +13,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ✅ Checkout source
+      # 🧾 Checkout source code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Set up JDK 17
+      # ☕ Set up Java JDK 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # ✅ Grant execution permission for Gradle
+      # ⚙️ Give Gradle wrapper permission to execute
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
-      # ✅ Cache Gradle dependencies
+      # 💾 Cache Gradle dependencies for faster builds
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
@@ -38,17 +39,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # ✅ Build debug APK
+      # 🧱 Build Debug APK
       - name: Build Debug APK
         run: ./gradlew assembleDebug --stacktrace
 
-      # ✅ Upload build artifact
+      # 📦 Upload generated APK as artifact
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: TurboLiteOptimizer-debug
+          name: TurboLiteOptimizer-Debug
           path: app/build/outputs/apk/debug/app-debug.apk
 
-      # ✅ Optional: Print APK size
-      - name: Show APK size
-        run: ls -lh app/build/outputs/apk/debug/
+      # 📏 Show output file size and path for verification
+      - name: Show APK size and location
+        run: |
+          echo "APK build finished!"
+          ls -lh app/build/outputs/apk/debug/
